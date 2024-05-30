@@ -19,17 +19,6 @@ app.get("/track", (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'trackPage.html'))
 })
 
-app.post("/submit", async (req, res) => {
-
-    console.log(req.body)
-    const foodName = req.body.foodName
-    const productCode = req.body.productCode
-    const productPrice = req.body.productPrice
-
-    const response = await sendData(foodName, productCode, productPrice)
-    res.status(200).send({message: response})
-})
-
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`)
 })
