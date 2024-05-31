@@ -5,9 +5,9 @@ const port = 3000
 
 const path = require("path")
 
-const { sendData } = require("./controller/smartContractInteraction")
-
 app.use(express.static(path.join(__dirname, 'public')))
+app.use('/contract', express.static(path.join(__dirname, 'contract')))
+
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
 
