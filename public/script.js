@@ -70,5 +70,16 @@ form.addEventListener('submit', async function (event) {
 });
 
 document.getElementById("foodLogs").addEventListener('click', async () => {
-    console.log(await contract.methods.getFoodTrackedByAddress(myAccount).call())
+    let foodTracked = await contract.methods.getFoodTrackedByAddress(myAccount).call()
+
+    foodTracked = foodTracked.map(item => ({name: item.name, id: Number(item.id), price: Number(item.price)}))
+
+    const displayElement = document.getElementById("foodLogsDisplay")
+    let html = "<ul>"
+    for (let i = 0; i < foodTracked.length; i++) {
+        html += `<li><h3>${JSON.stringify(foodTracked[i])}</h3></li>`
+    }
+    html += "</ul>"
+
+    displayElement.innerHTML = html
 })
