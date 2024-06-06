@@ -7,12 +7,9 @@ const path = require("path")
 app.use(express.static(path.join(__dirname, 'public')))
 app.use('/contract', express.static(path.join(__dirname, 'contract')))
 
+// Copy these rows for a new route
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'homePage.html'))
-})
-
-app.get("/track", (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'trackPage.html'))
 })
 
 app.listen(port, () => {
