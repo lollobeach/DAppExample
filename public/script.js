@@ -20,4 +20,4 @@ if (window.ethereum !== null) {
 }
 
 
-// Add the Business Logic to interact with the Smart Contract
+// TODO: Add the Business Logic to interact with the Smart Contract
