@@ -2,7 +2,6 @@ const form = document.getElementById('trackform')
 
 import contractABI from "../contract/contractABI.json" with { type: 'json' }
 
-// Contract Address: 0xbe2d2cc7ce927d8e682f45e6fd86ab31758d15af
 const contractAddress = "0xbe2d2cc7ce927d8e682f45e6fd86ab31758d15af"
 
 let myAccount = ""
@@ -24,7 +23,7 @@ if (window.ethereum !== null) {
             .on("data", (event) => {
                 console.log(event.returnValues)
                 eventElement.style.display = 'block'
-                eventElement.textContent = `Event emitted: ${event.returnValues.productName}, ${event.returnValues.productId}, ${event.returnValues.price}`
+                eventElement.textContent = `Event emitted: ${event.returnValues.sender}, ${event.returnValues.productName}, ${event.returnValues.productId}, ${event.returnValues.price}`
             })
             .on("error", console.error)
     })
@@ -32,6 +31,7 @@ if (window.ethereum !== null) {
 
 
 form.addEventListener('submit', async function (event) {
+    // avoid the page to reload when submitting the form
     event.preventDefault();
 
     const data = new FormData(form)
@@ -49,6 +49,8 @@ form.addEventListener('submit', async function (event) {
     buttonElement.style.display = 'none';
     responseElement.style.display = 'none'
 
+                                                                // "send" method for writing data
+    // for more information: https://docs.web3js.org/guides/migration_from_other_libs/ethers#calling-contracts-methods
     contract.methods.addFood(productName, productCode, productPrice).send({ from: myAccount })
         .then((receipt) => {
             loadingElement.style.display = 'none'; // Hide the loading indicator
@@ -70,6 +72,8 @@ form.addEventListener('submit', async function (event) {
 });
 
 document.getElementById("foodLogs").addEventListener('click', async () => {
+                                                                            // "call" method only for reading data
+    // for more information: https://docs.web3js.org/guides/migration_from_other_libs/ethers#calling-contracts-methods
     let foodTracked = await contract.methods.getFoodTrackedByAddress(myAccount).call()
 
     foodTracked = foodTracked.map(item => ({name: item.name, id: Number(item.id), price: Number(item.price)}))
@@ -78,6 +82,28 @@ document.getElementById("foodLogs").addEventListener('click', async () => {
     let html = "<ul>"
     for (let i = 0; i < foodTracked.length; i++) {
         html += `<li><h3>${JSON.stringify(foodTracked[i])}</h3></li>`
+    }
+    html += "</ul>"
+
+    displayElement.innerHTML = html
+})
+
+
+document.getElementById("pastEvents").addEventListener('click', async () => {
+
+    // how to get past events
+    // for more information: https://docs.web3js.org/libdocs/Contract#getpastevents
+    let pastEvents = await contract.getPastEvents("NewFood", {
+        fromBlock: 0,
+        toBlock: "latest"
+    })
+
+    pastEvents = pastEvents.map(event => ({name: event.returnValues.productName, id: Number(event.returnValues.productId), price: Number(event.returnValues.price)}))
+
+    const displayElement = document.getElementById("pastEventsDisplay")
+    let html = "<ul>"
+    for (let i = 0; i < pastEvents.length; i++) {
+        html += `<li><h3>${JSON.stringify(pastEvents[i])}</h3></li>`
     }
     html += "</ul>"
 
